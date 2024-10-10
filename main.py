@@ -86,11 +86,61 @@ def threeElemPtrSort(lst):
 
         iter += 1
 
+# problem 238
+# this problem is very, very contrived. I don like it
 
+def standard(lst):
+    '''
+    this is the standard solution leetcode wants
+    compute pre and post fix product
+    and then multiply the complements as needed
+    very ugly solution
+    '''
+    if len(lst)<=1:
+        return lst
+    if len(lst)==2:
+        return [lst[1],lst[0]]
+    else:   #at least 3 elems in lst
+        proLst=lst.copy()
+        prepro(proLst)
+        postLst = lst.copy()
+        postpro(postLst)
+
+        print(proLst,'\n',postLst)
+
+        res = []
+        for i in range(len(proLst)):
+            if i == 0:  #begin
+                res.append(postLst[1])
+            elif i == len(proLst)-1:  #end
+                res.append(proLst[-2])
+            else:
+                print(f"\tind: {i}, product of: {proLst[i-1]} * {postLst[i+1]}")
+                res.append(proLst[i-1] * postLst[i+1])
+        return res
+
+#below are helper funcs for problem238
+def prepro(lst):
+    if len(lst)<=1:
+        return
+    if len(lst)==2:
+        lst[1] *= lst[0]
+        return
+    for i in range(1,len(lst)):
+        lst[i]*=lst[i-1]
+
+def postpro(lst):
+    if len(lst)<=1:
+        return
+    if len(lst)==2:
+        lst[0] *= lst[1]
+    for i in range(len(lst)-2,-1,-1):
+        lst[i]*=lst[i+1]
 
 
 if __name__ == '__main__':
-    lst = [2,0,1]
-    threeElemPtrSort(lst)
-
+    lst = [1,2,3,4]
     print(lst)
+
+    res = standard(lst)
+    print(res)
