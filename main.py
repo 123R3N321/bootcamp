@@ -138,9 +138,103 @@ def postpro(lst):
         lst[i]*=lst[i+1]
 
 
-if __name__ == '__main__':
-    lst = [1,2,3,4]
-    print(lst)
+#week2 homework:
 
-    res = standard(lst)
-    print(res)
+# leetcode 8, string to int conversion
+
+'''
+thoughts:
+read string backward seems to make the most sense
+we need to: store cur val
+            store number of digits we have
+            track what we see
+            reset if needed
+'''
+
+
+def weirdAtoI(msg):
+    for i in range(len(msg)):  # remove leading empty spaces
+        char = msg[i]
+        if char != ' ':
+            msg = msg[i:]
+            break
+
+    digits = -1
+    num = 0
+    for i in range(len(msg) - 1, -1, -1):  # we go bckward in ind
+        char = msg[i]
+        if char.isdigit():
+            digits += 1
+            num += (ord(char) - 48) * (10 ** digits)
+        else:
+            if i == 0 and char == '+':
+                pass
+            elif i == 0 and char == '-':
+                num = -num
+            else:  # reset
+                num = 0
+                digits = -1
+
+    if num > 2 ** 31 - 1:
+        num = 2 ** 31 - 1
+    elif num < -(2 ** 31):
+        num = - (2 ** 31)
+
+    return num
+'''
+conclusions:
+very contrived problem. Not fun.
+'''
+
+#next, leetcode 438
+
+'''
+I can think of a dictionary solution
+which will give runtime m*n where
+m is size of p, n is size of s
+let's see how it works
+
+update: dic is not good for repeated letters
+
+update: even in sliding window, move left and right most part only (assume long needle)
+'''
+def anaSlidingWindow(hey, needle):
+    map = [0]*26
+    for each in needle:
+        map[ord(each)-97]+=1    #hashed map yay!
+
+    res = []
+    front = 0
+    back = len(needle) - 1
+    for each in hey[front:back+1]:
+        map[ord(each)-97]-=1
+    if checkMap(map):
+        res.append(0)
+
+    while back < len(hey)-1:
+        map[ord(hey[front])-97]+=1
+        front = front+1
+        back = back + 1
+        map[ord(hey[back])-97]-=1
+        if checkMap(map):
+            res.append(front)
+    return res
+
+
+
+def checkMap(lst):
+    return all(x==0 for x in lst)
+
+
+
+
+if __name__ == '__main__':
+    print(anaSlidingWindow('baa','aa'), " should be [1]")
+
+    print(anaSlidingWindow('abab','ab'), " should be [0,1,2]")
+    print(anaSlidingWindow("cbaebabacd",'abc'), 'should be [0,6]')
+    # lst = [1,2,3,4]
+    # print(lst)
+    #
+    # res = standard(lst)
+    # print(res)
