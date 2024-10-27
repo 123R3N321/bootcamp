@@ -225,14 +225,165 @@ def anaSlidingWindow(hey, needle):
 def checkMap(lst):
     return all(x==0 for x in lst)
 
+'''
+leetcode 997 townjudge, this 
+is my second time doing it
+'''
+
+'''
+intuitive approach:
+check all pairs and put elem [0] onto a map
+and elem [1] as its value
+for each key-val pair, put the value in
+a set(), then check which element in the set
+does not have a corresponding key in the map
+'''
+
+'''
+actual good solution:
+1. use in and out degree approach instead of key-val check
+2. use hash (list of N amount of zeros) instead of dict/set
+'''
+
+def townJudge(n,lst):
+    trustMap = [0] * (n+1)  # so index pos is the person we trust
+    for i in range(len(lst)):
+        parent, child = lst[i]
+        trustMap[child] += 1
+    judge = None
+    for i in range(n+1):
+        if trustMap[i] == n-1:
+            judge = i
+    if not judge:
+        return -1
+    for each in lst:
+        if each[0] == judge and each[1] != judge:
+            return -1
+    return judge
+'''
+leetcode 207
+'''
+'''
+topological sort algo using queue
+'''
+import queue
+def kahnSort(n, lst):
+
+    if len(lst) == 0:
+        return True
+
+    Q = queue.Queue()
+    courses = [0] * (n+1)   #hash all courses, value locally are edges going in
+    edges = [[] for i in range (n+1)]     # all edges going out to children for node i at ind i
+
+    for each in lst:
+        course, parent = each
+        courses[course] += 1    #so we know which course to start with
+        edges[parent].append(course)    #so we know where each course leads to
+
+    for i in range(n+1):
+        if courses[i] == 0 and len(edges[i])>0:
+            Q.put(edges[i]) #put the info of parent -> children list into the queue
+    if Q.empty():
+        return False
+
+    while not Q.empty():
+        local = Q.get()
+        for each in local:
+            if courses[each] >=1:
+                courses[each] -= 1
+                if courses[each] == 0:
+                    Q.put(edges[each])
+
+    return Q.empty() and sum(courses) == 0
+
+
+
+
+'''
+leetcode 20
+'''
+
+'''
+seems very easy
+'''
+
+'''
+leetcode 739
+'''
+'''
+use stack (I'm lazy, gonna use a list as a stack)
+store an ind-temp pair
+'''
+
+def waitList(lst):
+    stack = []
+    res = [0] * len(lst)
+    if len(lst) == 0:
+        return res
+    cur = lst[0]
+    for i in range(len(lst)):
+        if lst[i] <= cur:
+            stack.append((i, lst[i]))
+
+        else:
+            while lst[i]>cur and len(stack)>0:
+                target = stack.pop()
+                if len(stack)>0:
+                    cur = stack[-1][-1]
+                res[target[0]] = (i-target[0])
+            stack.append((i,lst[i]))
+        cur = lst[i]
+    return res
+'''
+comment on above question:
+excellent for mock apper of midterm2, 1134
+'''
+
+
+
+'''
+leetcode 225, and reverse it: implement queue using stack
+'''
+
+'''
+This is some very interesting leetcode 
+approach on dfs, originally in cpp
+
+leetcode 547
+'''
+def findCircleNum(self, isConnected) -> int:
+    visited = [False]*len(isConnected)
+    ct = 0
+    for i in range(len(visited)):
+        if not visited[i]:
+            ct+=1
+            dfs(i,isConnected,visited)
+    return ct
+
+
+def dfs(vert, adjacency, visited):
+    visited[vert] = True
+    for i in range(len(adjacency[vert])):
+        if not visited[i] and 1==adjacency[vert][i]:
+            dfs(i, adjacency, visited)
+
+
+
 
 
 
 if __name__ == '__main__':
-    print(anaSlidingWindow('baa','aa'), " should be [1]")
+    # print(anaSlidingWindow('baa','aa'), " should be [1]")
 
-    print(anaSlidingWindow('abab','ab'), " should be [0,1,2]")
-    print(anaSlidingWindow("cbaebabacd",'abc'), 'should be [0,6]')
+    # print(anaSlidingWindow('abab','ab'), " should be [0,1,2]")
+    # print(anaSlidingWindow("cbaebabacd",'abc'), 'should be [0,6]')
+
+    # print(townJudge(4,[[1,3],[1,4],[2,3],[2,4],[4,3]]))
+    lst = [[0,4],[3,1],[5,5]]
+    temp = [73,74,75,71,69,72,76,73]
+    # print(kahnSort(6,lst))
+    print(waitList(temp))
     # lst = [1,2,3,4]
     # print(lst)
     #
